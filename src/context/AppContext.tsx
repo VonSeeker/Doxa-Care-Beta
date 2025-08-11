@@ -11,6 +11,7 @@ interface AppContextType {
   setEmergencyModalOpen: (isOpen: boolean) => void;
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  setLanguage: (lang: Language) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -27,6 +28,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const value = {
     language,
     toggleLanguage,
+    setLanguage,
     isEmergencyModalOpen,
     setEmergencyModalOpen,
     activeTab,
