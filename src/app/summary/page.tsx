@@ -1,16 +1,66 @@
 
 'use client';
 
+import { useRef } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { BookText, Bot, FileText, HeartPulse, Hospital, Printer, Users, Wrench } from 'lucide-react';
-import { translations } from '@/lib/translations';
+import { BookText, Bot, FileText, HeartPulse, Hospital, Printer, Users, Wrench, ChevronDown, Download } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 
 export default function SummaryPage() {
+    const summaryRef = useRef<HTMLDivElement>(null);
+
     const handlePrint = () => {
         window.print();
     };
+
+    const handleDownload = () => {
+        const input = summaryRef.current;
+        if (input) {
+             // Temporarily remove the print:hidden class from the header for PDF generation
+            const header = input.querySelector('#summary-header');
+            const originalClasses = header?.className;
+            if (header) {
+                header.className = header.className.replace('print:hidden', '');
+            }
+
+            html2canvas(input, {
+                scale: 2, // Higher scale for better quality
+                useCORS: true,
+                onclone: (document) => {
+                    // This runs in the cloned document before rendering
+                    // We remove the actions button so it doesn't appear in the PDF
+                    const actionsButton = document.getElementById('summary-actions');
+                    if (actionsButton) {
+                        actionsButton.style.display = 'none';
+                    }
+                }
+            }).then((canvas) => {
+                 if (header && originalClasses) {
+                    header.className = originalClasses;
+                }
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: [canvas.width, canvas.height]
+                });
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                pdf.save('DoxaCare-Project-Summary.pdf');
+            });
+        }
+    };
+
 
     const features = [
         {
@@ -38,12 +88,26 @@ export default function SummaryPage() {
     const tech = ["Next.js", "React", "TypeScript", "Tailwind CSS", "ShadCN UI", "Google's Gemini (Genkit)"];
 
     return (
-        <div className="bg-background text-foreground font-body print:bg-white">
+        <div ref={summaryRef} className="bg-background text-foreground font-body print:bg-white">
             <div className="container mx-auto max-w-4xl px-4 py-8">
 
-                <div className="flex justify-between items-center mb-6 print:hidden">
+                <div id="summary-header" className="flex justify-between items-center mb-6 print:hidden">
                     <h1 className="text-3xl font-bold text-primary font-headline">Project Summary for Investors</h1>
-                    <Button onClick={handlePrint}><Printer className="mr-2 h-4 w-4" /> Print Summary</Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button id="summary-actions">Actions <ChevronDown className="ml-2 h-4 w-4" /></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onClick={handlePrint}>
+                                <Printer className="mr-2 h-4 w-4" />
+                                <span>Print</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleDownload}>
+                                <Download className="mr-2 h-4 w-4" />
+                                <span>Download as PDF</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
 
                 <Card className="mb-6 print:shadow-none print:border-none">
