@@ -30,13 +30,6 @@ export const clinics: Clinic[] = [
   { name: 'Segbwema Community Health Center', location: 'Segbwema Town', district: 'kailahun', phone: '+232 76 223344', type: 'Clinic', is24Hour: false },
 ];
 
-export const quickChatActions = [
-    { id: 'malaria', icon: Bug, color: 'bg-green-100 text-green-800' },
-    { id: 'pregnancy', icon: Baby, color: 'bg-yellow-100 text-yellow-800' },
-    { id: 'diarrhea', icon: Droplets, color: 'bg-red-100 text-red-800' },
-    { id: 'hypertension', icon: HeartPulse, color: 'bg-purple-100 text-purple-800' },
-];
-
 export const healthTopics = {
     diseases: [
         { topic: 'Malaria', symptoms: 'fever, chills, headache, muscle pain' },
