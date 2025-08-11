@@ -2,15 +2,33 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookText, LineChart, Newspaper, Globe, BookHeart } from 'lucide-react';
+import { BookText, LineChart, Newspaper, Globe, BookHeart, ListOrdered, HeartHandshake, Baby } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { translations } from '@/lib/translations';
+import { useState, useEffect } from 'react';
+import { fetchHealthStatistics } from '@/app/actions';
+import type { GetHealthStatisticsOutput } from '@/ai/flows/get-health-statistics';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
 
 export function HealthBlogTab() {
   const { language } = useAppContext();
   const t = translations[language].resourcesTab;
 
-  const statColors = ['bg-blue-50 text-blue-800', 'bg-green-50 text-green-800', 'bg-yellow-50 text-yellow-800'];
+  const [stats, setStats] = useState<GetHealthStatisticsOutput | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      setIsLoading(true);
+      const fetchedStats = await fetchHealthStatistics();
+      setStats(fetchedStats);
+      setIsLoading(false);
+    };
+
+    loadStats();
+  }, []);
 
   return (
     <Card className="shadow-md">
@@ -21,7 +39,7 @@ export function HealthBlogTab() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 p-4">
-        <div>
+        <section>
             <h3 className="mb-3 flex items-center border-b pb-2 text-lg font-semibold text-gray-800">
               <Globe className="mr-2 h-5 w-5 text-primary" />
               {t.internationalTitle}
@@ -33,16 +51,16 @@ export function HealthBlogTab() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg border p-3 transition-shadow hover:shadow-md"
+                  className="rounded-lg border p-3 transition-shadow hover:shadow-md hover:border-primary/50"
                 >
                   <h4 className="font-medium text-blue-600">{item.title}</h4>
                   <p className="mt-1 text-sm text-gray-600">{item.description}</p>
                 </a>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div>
+          <section>
             <h3 className="mb-3 flex items-center border-b pb-2 text-lg font-semibold text-gray-800">
               <BookHeart className="mr-2 h-5 w-5 text-primary" />
               {t.localTitle}
@@ -54,43 +72,72 @@ export function HealthBlogTab() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg border p-3 transition-shadow hover:shadow-md"
+                  className="rounded-lg border p-3 transition-shadow hover:shadow-md hover:border-primary/50"
                 >
                   <h4 className="font-medium text-blue-600">{item.title}</h4>
                   <p className="mt-1 text-sm text-gray-600">{item.description}</p>
                 </a>
               ))}
             </div>
-          </div>
+          </section>
         
-        <div>
+        <section>
           <h3 className="mb-3 flex items-center border-b pb-2 text-lg font-semibold text-gray-800">
             <LineChart className="mr-2 h-5 w-5 text-primary" />
             {t.statsTitle}
           </h3>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-              <div className={`rounded-lg p-3 ${statColors[0]}`}>
-                <h4 className="font-medium">{t.topDiseasesTitle}</h4>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
-                  {t.topDiseases.map(item => <li key={item}>{item}</li>)}
-                </ul>
+            {isLoading ? (
+               <div className="space-y-2">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
               </div>
-              <div className={`rounded-lg p-3 ${statColors[1]}`}>
-                <h4 className="font-medium">{t.maternalHealthTitle}</h4>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
-                  {t.maternalHealth.map(item => <li key={item}>{item}</li>)}
-                </ul>
-              </div>
-              <div className={`rounded-lg p-3 ${statColors[2]}`}>
-                <h4 className="font-medium">{t.childHealthTitle}</h4>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
-                  {t.childHealth.map(item => <li key={item}>{item}</li>)}
-                </ul>
-              </div>
-          </div>
-        </div>
+            ) : (
+                <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger className="font-medium text-blue-800 hover:no-underline">
+                      <div className="flex items-center">
+                        <ListOrdered className="mr-2 h-5 w-5 text-blue-600" />
+                        {t.topDiseasesTitle}
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="bg-blue-50 p-4 rounded-b-lg">
+                      <ol className="list-decimal list-inside text-sm space-y-2 text-blue-900">
+                          {stats?.topDiseases.map((disease, i) => <li key={i}>{disease}</li>)}
+                      </ol>
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-2">
+                    <AccordionTrigger className="font-medium text-green-800 hover:no-underline">
+                      <div className="flex items-center">
+                         <HeartHandshake className="mr-2 h-5 w-5 text-green-600" />
+                        {t.maternalHealthTitle}
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="bg-green-50 p-4 rounded-b-lg">
+                      <ul className="list-disc list-inside text-sm space-y-2 text-green-900">
+                          {stats?.maternalHealth.map((stat, i) => <li key={i}>{stat}</li>)}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-3">
+                    <AccordionTrigger className="font-medium text-yellow-800 hover:no-underline">
+                       <div className="flex items-center">
+                        <Baby className="mr-2 h-5 w-5 text-yellow-600" />
+                        {t.childHealthTitle}
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="bg-yellow-50 p-4 rounded-b-lg">
+                       <ul className="list-disc list-inside text-sm space-y-2 text-yellow-900">
+                          {stats?.childHealth.map((stat, i) => <li key={i}>{stat}</li>)}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+            )}
+          </section>
 
-        <div>
+        <section>
           <h3 className="mb-3 flex items-center border-b pb-2 text-lg font-semibold text-gray-800">
             <Newspaper className="mr-2 h-5 w-5 text-primary" />
             {t.newsTitle}
@@ -102,14 +149,14 @@ export function HealthBlogTab() {
                 href={news.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block border-b pb-3 last:border-b-0 last:pb-0"
+                className="block border-b pb-3 last:border-b-0 last:pb-0 hover:bg-gray-50 -m-2 p-2 rounded-lg"
               >
                 <h4 className="font-medium">{news.title}</h4>
                 <p className="text-sm text-gray-600">{news.description}</p>
               </a>
             ))}
           </div>
-        </div>
+        </section>
       </CardContent>
     </Card>
   );

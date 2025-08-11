@@ -12,7 +12,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAppContext } from '@/context/AppContext';
 import { translations } from '@/lib/translations';
 
-export default function Home() {
+export default function HomePage() {
   const [activeTab, setActiveTab] = React.useState('home');
   const isMobile = useIsMobile();
   const { language } = useAppContext();

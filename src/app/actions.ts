@@ -3,6 +3,7 @@
 import { healthQuery } from '@/ai/flows/health-query';
 import { symptomCheck, type SymptomCheckOutput } from '@/ai/flows/symptom-check';
 import type { Language } from '@/context/AppContext';
+import { getHealthStatistics, GetHealthStatisticsOutput } from '@/ai/flows/get-health-statistics';
 
 
 export async function askChatbot(query: string, language: Language): Promise<string> {
@@ -55,4 +56,17 @@ export async function analyzeHealthTopic(topic: string): Promise<AnalyzeHealthTo
 export async function symptomCheckFlow(prevState: any, formData: FormData) {
   const symptoms = formData.get('symptoms') as string;
   return analyzeHealthTopic(symptoms);
+}
+
+export async function fetchHealthStatistics(): Promise<GetHealthStatisticsOutput> {
+    try {
+        return await getHealthStatistics();
+    } catch (error) {
+        console.error('Error fetching health statistics:', error);
+        return {
+            topDiseases: ['Error fetching data'],
+            maternalHealth: ['Error fetching data'],
+            childHealth: ['Error fetching data'],
+        };
+    }
 }
