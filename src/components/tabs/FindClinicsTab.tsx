@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Hospital, Phone, MapPin, Loader2 } from 'lucide-react';
+import { Hospital, Phone, MapPin, Loader2, Search } from 'lucide-react';
 import { clinics, type Clinic } from '@/lib/data';
 import { useAppContext } from '@/context/AppContext';
 import { translations } from '@/lib/translations';
@@ -14,7 +14,7 @@ export function FindClinicsTab() {
   const { language } = useAppContext();
   const t = translations[language].clinicsTab;
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [filteredClinics, setFilteredClinics] = React.useState<Clinic[]>(clinics);
+  const [filteredClinics, setFilteredClinics] = React.useState<Clinic[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -69,6 +69,11 @@ export function FindClinicsTab() {
             <div className="flex items-center justify-center py-4">
               <Loader2 className="mr-3 h-8 w-8 animate-spin text-primary" />
               <span>{t.loading}</span>
+            </div>
+          ) : filteredClinics === null ? (
+            <div className="py-8 text-center text-gray-500">
+              <Search className="mx-auto h-12 w-12 text-gray-400" />
+              <p className="mt-4">Please enter a location to find clinics near you.</p>
             </div>
           ) : filteredClinics.length > 0 ? (
             filteredClinics.map((clinic) => <ClinicCard key={clinic.name} clinic={clinic} t={t} />)
