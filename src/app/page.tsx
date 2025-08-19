@@ -30,19 +30,17 @@ export default function HomePage() {
       <Tabs defaultValue="home" value={activeTab} onValueChange={setActiveTab} className="flex flex-1 flex-col">
         <div className="bg-white shadow-sm">
           <div className="container mx-auto px-4">
-            <TabsList className="h-auto bg-transparent p-0">
-              <div className="flex w-full overflow-x-auto">
-                {TABS.map((tab) => (
-                  <TabsTrigger
-                    key={tab.value}
-                    value={tab.value}
-                    className="whitespace-nowrap rounded-none border-b-2 border-transparent px-4 py-3 font-medium text-gray-600 data-[state=active]:border-primary data-[state=active]:bg-green-50 data-[state=active]:text-primary data-[state=active]:shadow-none"
-                  >
-                    {tab.icon}
-                    {tab.label}
-                  </TabsTrigger>
-                ))}
-              </div>
+            <TabsList className="h-auto w-full justify-start overflow-x-auto bg-transparent p-0">
+              {TABS.map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="flex-shrink-0 whitespace-nowrap rounded-none border-b-2 border-transparent px-4 py-3 font-medium text-gray-600 data-[state=active]:border-primary data-[state=active]:bg-green-50 data-[state=active]:text-primary data-[state=active]:shadow-none"
+                >
+                  {tab.icon}
+                  {tab.label}
+                </TabsTrigger>
+              ))}
             </TabsList>
           </div>
         </div>
