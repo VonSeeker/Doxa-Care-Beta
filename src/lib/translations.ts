@@ -8,7 +8,7 @@ export const translations = {
       emergency: 'Emergency',
     },
     tabs: {
-        home: 'Home',
+        home: 'Explore',
         healthCheck: 'Health Check',
         blog: 'Resources',
         clinics: 'Find Clinics',
@@ -133,7 +133,7 @@ export const translations = {
       emergency: 'Emergency',
     },
     tabs: {
-        home: 'Hom',
+        home: 'Ɛksplɔ',
         healthCheck: 'Hɛlt Chɛk',
         blog: 'Risos dem',
         clinics: 'Fain Klinik dem',
