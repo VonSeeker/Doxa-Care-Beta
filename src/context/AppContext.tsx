@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
-export type Language = 'en' | 'krio' | 'mende' | 'temne';
+export type Language = 'en' | 'krio';
 
 interface AppContextType {
   language: Language;
