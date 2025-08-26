@@ -34,7 +34,7 @@ export type ChatInterfaceHandles = {
 
 interface ChatInterfaceProps {}
 
-const ChatInterface = forwardRef<ChatInterfaceHandles, ChatInterfaceProps>((props, ref) => {
+const ChatInterface = forwardRef<ChatInterfaceHandles, ChatInterfaceProps>((_props, ref) => {
   const { language } = useAppContext();
   const t = translations[language].homeTab.chat;
 
